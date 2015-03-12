@@ -258,4 +258,28 @@ Now if you login to your server: `ssh workshop` you can test your key with githu
 
 # Final steps
 
+Once you have a successful deploy happening, ie you deploy and there is no errors, we can setup the Nginx config and then restart nginx to test our new app
 
+`/etc/nginx/sites-enabled/default`:
+
+```
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server ipv6only=on;
+
+    server_name mydomain.com;
+    passenger_enabled on;
+    rails_env    production;
+    root         /home/deploy/workshop/current/public;
+
+    # redirect server error pages to the static page /50x.html
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   html;
+    }
+}
+```
+
+Now we can either restart nginx `sudo service nginx restart` or we can take advantage of the fact passenger is watching a particular directory for timestamp changes to kick a restart into gear `touch /home/deploy/workshop/current/tmp/restart.txt`
+
+# FIN
